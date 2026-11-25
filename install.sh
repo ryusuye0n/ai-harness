@@ -75,6 +75,7 @@ if [ -n "$stacks" ]; then
     case "$name" in
       "" | *[!A-Za-z0-9_-]*) die "스택 팩 이름이 올바르지 않습니다: '$name'" ;;
     esac
+    [ "$name" != "_template" ] || die "_template 은 새 스택 팩을 만드는 뼈대라 설치할 수 없습니다. 복사해서 이름을 바꿔 쓰세요."
     [ -d "$ROOT/stacks/$name" ] || die "스택 팩이 없습니다: $name (stacks/ 아래 폴더 이름을 확인하세요)"
   done
 fi
