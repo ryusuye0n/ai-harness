@@ -129,6 +129,12 @@ copy_tree() {
   done < <(find "$src_dir" -type f ! -name README.md ! -name .gitkeep ! -name settings.hooks.json -print0 | sort -z)
 }
 
+# ── core ──────────────────────────────────────────────────────
+
+has_part hooks && copy_tree "$ROOT/core/hooks" "$target/.claude/hooks"
+has_part agents && copy_tree "$ROOT/core/agents" "$target/.claude/agents"
+has_part skills && copy_tree "$ROOT/core/skills" "$target/.claude/skills"
+
 # ── 마무리 ────────────────────────────────────────────────────
 
 echo
