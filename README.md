@@ -22,6 +22,30 @@ AI 코딩 도구(Claude Code, Codex)에서 쓰는 훅, 에이전트, 스킬을 �
 
 각 항목의 자세한 설명은 [훅](core/hooks/README.md), [에이전트](core/agents/README.md), [스킬](core/skills/README.md) 문서에 있습니다.
 
+## 빠르게 시작
+
+필요한 것: `git`, `bash`(윈도우에서는 Git Bash), `jq` 또는 `node`, 그리고 Claude Code 또는 Codex.
+
+```bash
+git clone https://github.com/ryusuye0n/ai-harness.git
+cd ai-harness
+
+./install.sh ../my-repo --dry-run    # 무엇이 들어갈지 먼저 확인
+./install.sh ../my-repo              # 설치
+```
+
+설치한 뒤 할 일은 세 가지입니다.
+
+1. `my-repo/CLAUDE.md`의 빈칸을 채웁니다. 커밋과 PR 규칙은 비워 둬도 됩니다. ([컨벤션 적는 법](#컨벤션-적는-법))
+2. 레포에 `.claude/settings.json`이 이미 있었다면 [templates/settings.json](templates/settings.json)의 `hooks` 항목을 직접 합칩니다. 없었다면 설치할 때 함께 들어갑니다.
+3. 그 레포에서 Claude Code를 엽니다. 훅이 막으면 `[command-guard] 차단: ...`처럼 이유가 전달됩니다.
+
+Codex를 쓴다면 `--tool codex`를 붙입니다.
+
+```bash
+./install.sh ../my-repo --tool codex
+```
+
 ## 원칙
 
 - **하네스는 도구만 제공합니다.** 스킬, 훅, 에이전트가 여기에 들어 있습니다.
