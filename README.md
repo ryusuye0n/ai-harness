@@ -42,3 +42,15 @@ stacks/<이름>/
 ├─ skills/            그 스택 전용 스킬
 └─ hooks/modules/     그 스택 전용 훅 모듈
 ```
+
+## 도구 지원
+
+| 도구 | 상태 |
+|---|---|
+| Claude Code | 우선 지원 |
+| Codex | 예정 |
+| Gemini CLI | 예정 |
+
+## 라이선스
+
+[MIT](LICENSE). 다른 레포에서 가져온 파일은 원 저작권 표기를 `NOTICE`에 남깁니다.
