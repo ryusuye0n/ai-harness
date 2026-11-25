@@ -53,4 +53,45 @@ if [ -n "$text" ]; then
   done
 fi
 
+# ── 2. 비밀 파일을 git add 하는지 ───────────────────────────────
+
+# .env.example 같은 견본은 통과시키고, 실제 비밀이 들어가는 파일만 true 로 본다.
+is_secret_file() {
+  local base="${1##*/}"
+  case "$base" in
+    .env.example | .env.sample | .env.template | .env.dist) return 1 ;;
+    .env | .env.*) return 0 ;;
+    *.pem | *.key | *.p12 | *.pfx | *.jks | *.keystore) return 0 ;;
+    id_rsa | id_ecdsa | id_ed25519 | credentials.json) return 0 ;;
+  esac
+  return 1
+}
+
+if [ "$tool" = "Bash" ]; then
+  command="$(json_get tool_input.command)"
+  segments="$(printf '%s' "$command" | sed 's/&&/\n/g; s/||/\n/g; s/[;|&]/\n/g')"
+
+  while IFS= read -r segment; do
+    read -r -a words <<< "$segment"
+    [ "${words[0]:-}" = "git" ] && [ "${words[1]:-}" = "add" ] || continue
+
+    add_all=0
+    for word in "${words[@]:2}"; do
+      case "$word" in
+        -A | --all | "." | "*" | ":/") add_all=1 ;;
+        -*) ;;
+        *) is_secret_file "$word" && block "비밀 파일 git add: $word" "비밀 파일은 커밋하지 않습니다. .gitignore 에 추가하세요." ;;
+      esac
+    done
+
+    # git add . 처럼 한꺼번에 담을 때는 아직 추적하지 않는 파일 중에 비밀 파일이 있는지 본다.
+    if [ "$add_all" -eq 1 ]; then
+      while IFS= read -r file; do
+        [ -n "$file" ] || continue
+        is_secret_file "$file" && block "비밀 파일이 한꺼번에 담김: $file" "이 파일을 .gitignore 에 추가한 뒤 다시 시도하세요."
+      done < <(git ls-files --others --exclude-standard 2>/dev/null)
+    fi
+  done <<< "$segments"
+fi
+
 exit 0
