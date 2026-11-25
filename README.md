@@ -47,12 +47,13 @@ ai-harness/
 |---|---|
 | `--only <목록>` | 설치할 구성만 고릅니다: `hooks`, `agents`, `skills`, `templates` (쉼표로 구분, 기본은 전부) |
 | `--stack <목록>` | `stacks/` 아래 스택 팩을 함께 설치합니다 |
-| `--tool <이름>` | 대상 도구입니다. 지금은 `claude`만 지원합니다 |
+| `--tool <이름>` | 대상 도구입니다. `claude`(기본) 또는 `codex` |
 | `--force` | 이미 있는 하네스 파일을 덮어씁니다 |
 | `--dry-run` | 복사하지 않고 결과만 보여 줍니다 |
 
 - 이미 있는 파일은 덮어쓰지 않고 건너뜁니다. `--force`는 하네스가 만든 파일만 덮어씁니다.
 - 대상 레포의 `CLAUDE.md`와 `.claude/settings.json`은 사용자 파일이라 `--force`로도 덮어쓰지 않습니다. 설정 파일이 이미 있다면 [templates/settings.json](templates/settings.json)의 `hooks` 항목을 직접 합칩니다.
+- `--tool codex`는 `.codex/`, `.agents/`, `AGENTS.md`에 Codex 형식으로 변환해서 넣습니다. 자세한 내용은 [adapters/codex/README.md](adapters/codex/README.md)에 있습니다.
 
 설치한 뒤에는 `CLAUDE.md`의 빈칸을 프로젝트에 맞게 채웁니다. 설정 항목 설명은 [templates/README.md](templates/README.md)에 있습니다. 훅은 `jq` 또는 `node`가 있어야 동작합니다.
 
@@ -71,7 +72,7 @@ stacks/<이름>/
 | 도구 | 상태 |
 |---|---|
 | Claude Code | 우선 지원 |
-| Codex | 예정 |
+| Codex | 지원. 변환 형식과 설치 동작만 검증했고 실제 Codex에서의 동작은 미검증 ([adapters/codex](adapters/codex/README.md)) |
 | Gemini CLI | 예정 |
 
 ## 라이선스
