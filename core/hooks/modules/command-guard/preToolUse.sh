@@ -145,4 +145,46 @@ while IFS= read -r segment; do
   fi
 done <<< "$segments"
 
+# ── 3. 원격 리소스 삭제와 받아서 바로 실행 ──────────────────────────
+
+# git push --delete, git push origin :브랜치
+git_deletes_remote_ref() {
+  local -a words
+  local word seen_git=0 seen_push=0
+  read -r -a words <<< "$1"
+  for word in "${words[@]}"; do
+    if [ "$seen_git" -eq 0 ]; then
+      [ "$word" = "git" ] && seen_git=1
+      continue
+    fi
+    if [ "$seen_push" -eq 0 ]; then
+      [ "$word" = "push" ] && seen_push=1
+      continue
+    fi
+    case "$word" in
+      --delete | -d) return 0 ;;
+      :?*) return 0 ;;
+    esac
+  done
+  return 1
+}
+
+re_gh_delete='(^|[[:space:]])gh[[:space:]]+(repo|release)[[:space:]]+delete([[:space:]]|$)'
+re_gh_api_delete='(^|[[:space:]])gh[[:space:]]+api[[:space:]].*(-X|--method)[[:space:]=]*[Dd][Ee][Ll][Ee][Tt][Ee]'
+
+while IFS= read -r segment; do
+  if git_deletes_remote_ref "$segment"; then
+    block "원격 브랜치·태그 삭제" "원격에서 삭제하면 되돌리기 어렵습니다. 직접 실행하세요."
+  fi
+  if [[ "$segment" =~ $re_gh_delete ]] || [[ "$segment" =~ $re_gh_api_delete ]]; then
+    block "gh 원격 리소스 삭제" "GitHub 리소스 삭제는 되돌릴 수 없습니다. 직접 실행하세요."
+  fi
+done <<< "$segments"
+
+# curl 이나 wget 으로 받은 내용을 검토 없이 셸에 넘기는 명령
+re='(curl|wget)[^|]*\|[[:space:]]*(sudo[[:space:]]+)?(ba|z|da)?sh([[:space:]]|$)'
+if [[ "$command" =~ $re ]]; then
+  block "받은 스크립트를 바로 셸에 전달" "스크립트를 먼저 내려받아 내용을 확인한 뒤 실행하세요."
+fi
+
 exit 0
