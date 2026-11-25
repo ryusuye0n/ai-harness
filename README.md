@@ -21,6 +21,7 @@ ai-harness/
 │   ├─ claude/
 │   ├─ codex/
 │   └─ gemini/
+├─ install.sh       하네스를 다른 레포로 복사하는 스크립트
 └─ templates/       레포에 복사해서 채워 쓰는 양식
     ├─ CLAUDE.md
     └─ settings.json
@@ -28,12 +29,32 @@ ai-harness/
 
 ## 사용 방법
 
-아직 설치 스크립트는 없습니다. 지금은 필요한 폴더를 쓰려는 레포의 `.claude/`로 직접 복사합니다.
+`install.sh`가 하네스 파일을 대상 레포로 복사합니다. bash가 필요하고, 윈도우에서는 Git Bash로 실행합니다.
 
-1. `core/`의 필요한 스킬, 에이전트, 훅을 복사합니다.
-2. 쓰는 스택이 `stacks/`에 있으면 그 폴더를 같이 복사합니다.
-3. `templates/CLAUDE.md`를 레포 루트에 복사해서 프로젝트 규칙을 채웁니다.
-4. `templates/settings.json`을 `.claude/settings.json`으로 복사합니다. 항목 설명은 [templates/README.md](templates/README.md)에 있습니다.
+```bash
+./install.sh <대상 레포 경로>
+```
+
+대상 레포의 `.claude/`에 훅, 에이전트, 스킬을 넣고, 레포 루트에 `CLAUDE.md` 양식을, `.claude/settings.json`에 설정 양식을 넣습니다.
+
+```bash
+./install.sh ../my-repo --dry-run              무엇을 할지만 보기
+./install.sh ../my-repo --only agents,hooks    일부만 설치
+./install.sh ../my-repo --stack go             stacks/go 팩도 함께 설치
+```
+
+| 옵션 | 설명 |
+|---|---|
+| `--only <목록>` | 설치할 구성만 고릅니다: `hooks`, `agents`, `skills`, `templates` (쉼표로 구분, 기본은 전부) |
+| `--stack <목록>` | `stacks/` 아래 스택 팩을 함께 설치합니다 |
+| `--tool <이름>` | 대상 도구입니다. 지금은 `claude`만 지원합니다 |
+| `--force` | 이미 있는 하네스 파일을 덮어씁니다 |
+| `--dry-run` | 복사하지 않고 결과만 보여 줍니다 |
+
+- 이미 있는 파일은 덮어쓰지 않고 건너뜁니다. `--force`는 하네스가 만든 파일만 덮어씁니다.
+- 대상 레포의 `CLAUDE.md`와 `.claude/settings.json`은 사용자 파일이라 `--force`로도 덮어쓰지 않습니다. 설정 파일이 이미 있다면 [templates/settings.json](templates/settings.json)의 `hooks` 항목을 직접 합칩니다.
+
+설치한 뒤에는 `CLAUDE.md`의 빈칸을 프로젝트에 맞게 채웁니다. 설정 항목 설명은 [templates/README.md](templates/README.md)에 있습니다. 훅은 `jq` 또는 `node`가 있어야 동작합니다.
 
 ## 스택 팩 추가
 
