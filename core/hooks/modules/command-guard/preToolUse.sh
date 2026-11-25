@@ -80,4 +80,69 @@ if [[ "$command" =~ $re ]]; then
   block "디바이스에 직접 쓰기" "디바이스에 바로 쓰는 명령입니다. 직접 실행하세요."
 fi
 
+# ── 2. git: 남의 커밋을 덮거나 작업 내용을 버리는 명령 ──────────────
+
+# --force-with-lease 는 허용하고, 그냥 --force, -f, +refspec 만 막는다.
+git_force_push() {
+  local -a words
+  local word seen_git=0 seen_push=0
+  read -r -a words <<< "$1"
+  for word in "${words[@]}"; do
+    if [ "$seen_git" -eq 0 ]; then
+      [ "$word" = "git" ] && seen_git=1
+      continue
+    fi
+    if [ "$seen_push" -eq 0 ]; then
+      [ "$word" = "push" ] && seen_push=1
+      continue
+    fi
+    case "$word" in
+      --force-with-lease* | --force-if-includes) ;;
+      --force) return 0 ;;
+      --*) ;;
+      -*f*) return 0 ;;
+      +*) return 0 ;;
+    esac
+  done
+  return 1
+}
+
+# git reset --hard 와 git clean -f 는 커밋하지 않은 변경을 되살릴 수 없게 만든다.
+# git clean 은 -n(--dry-run)이 있으면 실제로 지우지 않으므로 통과시킨다.
+git_discards_work() {
+  local -a words
+  local word sub="" seen_git=0 found=0 dry=0
+  read -r -a words <<< "$1"
+  for word in "${words[@]}"; do
+    if [ "$seen_git" -eq 0 ]; then
+      [ "$word" = "git" ] && seen_git=1
+      continue
+    fi
+    if [ -z "$sub" ]; then
+      case "$word" in reset | clean) sub="$word" ;; esac
+      continue
+    fi
+    case "$sub:$word" in
+      reset:--hard) found=1 ;;
+      clean:--force) found=1 ;;
+      clean:--dry-run) dry=1 ;;
+      clean:--*) ;;
+      clean:-*)
+        case "$word" in -*f*) found=1 ;; esac
+        case "$word" in -*n*) dry=1 ;; esac
+        ;;
+    esac
+  done
+  [ "$found" -eq 1 ] && [ "$dry" -eq 0 ]
+}
+
+while IFS= read -r segment; do
+  if git_force_push "$segment"; then
+    block "git push --force" "남의 커밋을 덮을 수 있습니다. --force-with-lease 를 쓰거나 직접 실행하세요."
+  fi
+  if git_discards_work "$segment"; then
+    block "git reset --hard / git clean -f" "커밋하지 않은 변경이 사라집니다. 상태를 확인한 뒤 직접 실행하세요."
+  fi
+done <<< "$segments"
+
 exit 0
