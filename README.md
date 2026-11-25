@@ -124,6 +124,17 @@ ai-harness/
 
 `CLAUDE.md`(`AGENTS.md`)는 내 규칙이 담긴 파일이라 하네스가 지우지 않습니다.
 
+## 문제 해결
+
+| 증상 | 확인할 것 |
+|---|---|
+| 훅이 아무것도 막지 않는다 | `.claude/settings.json`에 `hooks` 항목이 있는지, `jq` 또는 `node`가 설치되어 있는지 확인합니다. 둘 다 없으면 `[harness] jq 또는 node 가 없어 훅을 건너뜁니다` 경고가 나옵니다 |
+| Codex에서 훅이 실행되지 않는다 | Codex는 새로 추가하거나 바뀐 훅을 `/hooks`에서 검토하고 신뢰해야 실행합니다 |
+| 윈도우에서 훅이 오류를 낸다 | Git Bash가 필요합니다. 스크립트에 `\r`(CRLF)이 섞였다면 LF로 저장하세요 |
+| 막으면 안 되는 명령이 막힌다 | `command-guard`는 명령 문자열을 보고 판단합니다. 그 모듈만 빼려면 `.claude/hooks/modules/command-guard/` 폴더를 지웁니다 |
+| `permissions` 규칙이 먹지 않는다 | 규칙 문법은 Claude Code 버전에 따라 다를 수 있습니다. 쓰는 버전의 문서에 맞게 `settings.json`을 고칩니다 |
+| 설치가 "건너뜀"만 출력한다 | 이미 있는 파일은 덮어쓰지 않는 것이 기본입니다. 바꾸려면 `--force`를 씁니다 |
+
 ## 스택 팩 추가
 
 폴더 하나가 스택 하나입니다. `stacks/<이름>/` 아래에 스킬과 훅 모듈을 두면 되고, `core/`는 건드리지 않습니다. `stacks/_template/`을 복사해서 시작하면 되고, 자세한 방법은 [stacks/_template/README.md](stacks/_template/README.md)에 있습니다.
