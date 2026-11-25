@@ -1,6 +1,6 @@
 ---
-name: doc-polisher
-description: 문서를 현재 코드에 맞게 갱신한다. 틀린 경로·명령어·코드 조각을 바로잡고 빠진 사실을 채우며, 새 규칙을 지어내지 않고 커밋도 하지 않는다. "문서 갱신해줘", "README 최신화", "문서가 코드랑 맞는지 고쳐줘", "update the docs" 같은 요청에 쓴다.
+name: doc-sync
+description: 문서를 현재 코드에 맞게 갱신한다. 틀린 경로·명령어·코드 조각을 바로잡고 빠진 사실을 채우며, 새 규칙을 지어내지 않고 커밋도 하지 않는다. "문서를 코드에 맞춰 고쳐줘", "README가 낡았는지 보고 수정해줘", "docs are out of date" 같은 요청에 쓴다.
 tools: Read, Grep, Glob, Edit
 ---
 

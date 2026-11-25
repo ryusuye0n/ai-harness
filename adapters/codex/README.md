@@ -30,7 +30,7 @@
 
 ## Claude와 달라지는 점
 
-- **에이전트의 도구 제한이 사라집니다.** Codex 에이전트 파일에는 `tools`에 해당하는 항목이 없습니다. 검사만 하는 에이전트(`contradiction-finder`, `prompt-polisher`, `web-researcher`)의 "수정하지 않는다"는 본문 지시로만 남습니다.
+- **에이전트의 도구 제한이 사라집니다.** Codex 에이전트 파일에는 `tools`에 해당하는 항목이 없습니다. 검사만 하는 에이전트(`consistency-checker`, `prompt-reviewer`, `web-lookup`)의 "수정하지 않는다"는 본문 지시로만 남습니다.
 - **훅은 `PreToolUse`만 연결합니다.** 대상은 `Bash|apply_patch`입니다.
   - `irreversible-block`은 `Bash`만 봅니다.
   - `secret-block`은 `apply_patch`의 패치 내용(`tool_input.command`)에서 비밀값 패턴을 찾습니다. Codex의 파일 수정 입력에는 파일 경로 필드가 없다고 문서에 적혀 있습니다.

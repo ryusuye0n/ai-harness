@@ -6,10 +6,10 @@ Claude Code가 작업을 맡길 때 쓰는 서브에이전트 모음입니다. �
 
 | 에이전트 | 하는 일 | 파일 수정 | 도구 |
 |---|---|---|---|
-| `contradiction-finder` | 지침 문서끼리, 문서와 코드가 어긋나는 곳을 찾아 보고 | 안 함 | Read, Grep, Glob |
-| `doc-polisher` | 문서를 현재 코드에 맞게 갱신 (규칙을 새로 만들지 않음) | 문서만 | Read, Grep, Glob, Edit |
-| `prompt-polisher` | 에이전트, 스킬, 프롬프트 파일을 점검하고 개선안 제안 | 안 함 | Read, Grep, Glob |
-| `web-researcher` | 웹에서 최신 정보를 찾아 출처와 함께 정리 | 안 함 | WebSearch, WebFetch |
+| `consistency-checker` | 지침 문서끼리, 문서와 코드가 어긋나는 곳을 찾아 보고 | 안 함 | Read, Grep, Glob |
+| `doc-sync` | 문서를 현재 코드에 맞게 갱신 (규칙을 새로 만들지 않음) | 문서만 | Read, Grep, Glob, Edit |
+| `prompt-reviewer` | 에이전트, 스킬, 프롬프트 파일을 점검하고 개선안 제안 | 안 함 | Read, Grep, Glob |
+| `web-lookup` | 웹에서 최신 정보를 찾아 출처와 함께 정리 | 안 함 | WebSearch, WebFetch |
 
 ## 쓰는 방법
 

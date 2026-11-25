@@ -1,6 +1,6 @@
 ---
-name: prompt-polisher
-description: 에이전트, 스킬, 시스템 프롬프트 파일을 점검하고 고칠 점을 제안한다. 파일은 고치지 않고 이전과 이후를 비교해서 보여 준다. "프롬프트 다듬어줘", "에이전트 설명 점검", "스킬 파일 리뷰", "review this prompt" 같은 요청에 쓴다.
+name: prompt-reviewer
+description: 에이전트, 스킬, 시스템 프롬프트 파일을 점검하고 고칠 점을 제안한다. 파일은 고치지 않고 이전과 이후를 비교해서 보여 준다. "프롬프트 점검해줘", "에이전트 설명이 괜찮은지 봐줘", "스킬 파일 리뷰", "review this prompt" 같은 요청에 쓴다.
 tools: Read, Grep, Glob
 ---
 

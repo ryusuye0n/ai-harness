@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # 에이전트 변환: core/agents/<이름>.md 를 Codex 형식(.toml)으로 바꿔 stdout 으로 낸다.
 #
-#   convert-agent.sh core/agents/doc-polisher.md > .codex/agents/doc-polisher.toml
+#   convert-agent.sh core/agents/doc-sync.md > .codex/agents/doc-sync.toml
 #
 # 프론트매터의 name, description 과 본문(developer_instructions)만 옮긴다.
 # tools 는 Codex 에이전트 파일에 대응하는 항목이 없어서 버린다.

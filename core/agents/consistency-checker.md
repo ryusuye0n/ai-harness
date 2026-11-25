@@ -1,6 +1,6 @@
 ---
-name: contradiction-finder
-description: 프로젝트의 지침 문서끼리, 그리고 문서와 코드가 서로 어긋나는 곳을 찾아 보고한다. 파일은 고치지 않는다. "모순 찾아줘", "문서 충돌 검사", "규칙이 서로 맞는지 확인", "find contradictions", "check docs consistency" 같은 요청에 쓴다.
+name: consistency-checker
+description: 프로젝트의 지침 문서끼리, 그리고 문서와 코드가 서로 어긋나는 곳을 찾아 보고한다. 파일은 고치지 않는다. "지침이 서로 안 맞는 데 찾아줘", "문서랑 코드가 다른지 확인해줘", "규칙이 충돌하는지 점검", "check docs for conflicts" 같은 요청에 쓴다.
 tools: Read, Grep, Glob
 ---
 
