@@ -28,7 +28,7 @@ hooks/
 | 모듈 | 이벤트 | 하는 일 |
 |---|---|---|
 | `command-guard` | preToolUse | 루트·홈·작업 디렉터리를 통째로 지우는 `rm -rf`, `sudo rm`, `dd of=/dev/`, `mkfs`, `git push --force`(`--force-with-lease`는 허용), `git reset --hard`, `git clean -f`, 원격 브랜치·태그 삭제, `gh repo delete`, `curl ... \| sh` 차단 |
-| `secret-guard` | preToolUse | Write·Edit·Bash 입력에서 토큰과 키 패턴 차단, `.env`·개인 키 파일의 `git add` 차단 (`.env.example`은 허용) |
+| `secret-guard` | preToolUse | Write·Edit·Bash(Codex는 apply_patch 포함) 입력에서 토큰과 키 패턴 차단, `.env`·개인 키 파일의 `git add` 차단 (`.env.example`은 허용) |
 | `logging` | preToolUse | 도구 호출을 `~/.claude/logs/harness-tools.log`에 한 줄씩 기록. 위치는 `HARNESS_LOG_FILE`로 바꿈 |
 
 막을 때는 종료 코드 2와 이유를 돌려주고, Claude가 그 이유를 읽고 다른 방법을 찾습니다. `command-guard`는 "위험해 보이는가"가 아니라 "되돌릴 수 있는가"를 기준으로 합니다.
