@@ -135,6 +135,14 @@ has_part hooks && copy_tree "$ROOT/core/hooks" "$target/.claude/hooks"
 has_part agents && copy_tree "$ROOT/core/agents" "$target/.claude/agents"
 has_part skills && copy_tree "$ROOT/core/skills" "$target/.claude/skills"
 
+# ── 스택 팩 ───────────────────────────────────────────────────
+# 이름 검사는 위에서 이미 끝냈다. 복사 도중에 오류로 멈추지 않게 하려는 것이다.
+
+for name in ${stack_list[@]+"${stack_list[@]}"}; do
+  copy_tree "$ROOT/stacks/$name/skills" "$target/.claude/skills"
+  copy_tree "$ROOT/stacks/$name/hooks/modules" "$target/.claude/hooks/modules"
+done
+
 # ── 마무리 ────────────────────────────────────────────────────
 
 echo
