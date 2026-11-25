@@ -158,4 +158,4 @@ stacks/<이름>/
 
 ## 라이선스
 
-[MIT](LICENSE). 다른 레포에서 가져온 파일은 원 저작권 표기를 `NOTICE`에 남깁니다.
+[MIT](LICENSE)
