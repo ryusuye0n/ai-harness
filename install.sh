@@ -87,6 +87,48 @@ overwritten=0
 unchanged=0
 skipped=0
 
+# ── 복사 ──────────────────────────────────────────────────────
+
+say() { printf '%s\n' "$1"; }
+
+# 한 파일을 복사한다. $3 은 화면에 보여 줄 대상 레포 기준 경로다.
+copy_file() {
+  local src="$1" dest="$2" shown="$3" verb
+  if [ -e "$dest" ]; then
+    if cmp -s "$src" "$dest"; then
+      unchanged=$((unchanged + 1))
+      return
+    fi
+    if [ "$force" -ne 1 ]; then
+      skipped=$((skipped + 1))
+      say "건너뜀 (이미 있고 내용이 다름): $shown"
+      return
+    fi
+    verb="덮어씀"
+    overwritten=$((overwritten + 1))
+  else
+    verb="추가"
+    copied=$((copied + 1))
+  fi
+
+  if [ "$dry_run" -eq 1 ]; then
+    say "[dry-run] $verb: $shown"
+  else
+    mkdir -p "$(dirname "$dest")" && cp -p "$src" "$dest" || die "복사하지 못했습니다: $shown"
+    say "$verb: $shown"
+  fi
+}
+
+# 폴더 안의 파일을 같은 구조로 복사한다. 하네스 문서와 자리표시 파일은 건너뛴다.
+copy_tree() {
+  local src_dir="$1" dest_dir="$2" file rel
+  [ -d "$src_dir" ] || return 0
+  while IFS= read -r -d '' file; do
+    rel="${file#"$src_dir"/}"
+    copy_file "$file" "$dest_dir/$rel" "${dest_dir#"$target"/}/$rel"
+  done < <(find "$src_dir" -type f ! -name README.md ! -name .gitkeep ! -name settings.hooks.json -print0 | sort -z)
+}
+
 # ── 마무리 ────────────────────────────────────────────────────
 
 echo
