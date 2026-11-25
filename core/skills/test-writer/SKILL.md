@@ -1,5 +1,5 @@
 ---
-name: test
+name: test-writer
 description: 변경한 동작에 맞는 테스트를 작성하고 실행해서 결과를 확인한다. 프로젝트의 기존 테스트 방식을 따른다. "테스트 작성해줘", "테스트 돌려봐", "이 코드 테스트 추가", "write tests for this" 같은 요청에 쓴다.
 allowed-tools: Read, Grep, Glob, Edit, Write, Bash
 ---

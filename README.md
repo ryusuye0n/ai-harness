@@ -15,10 +15,10 @@ AI 코딩 도구(Claude Code, Codex)에서 쓰는 훅, 에이전트, 스킬을 �
 | 에이전트 | `doc-sync` | 문서를 현재 코드에 맞게 갱신합니다 |
 | 에이전트 | `prompt-reviewer` | 에이전트와 스킬 파일을 점검하고 개선안을 제안합니다 (파일 수정 안 함) |
 | 에이전트 | `web-lookup` | 웹에서 최신 정보를 찾아 출처와 함께 정리합니다 |
-| 스킬 | `planning` | 구현 전에 인터뷰로 요구사항을 정리해 스펙 문서를 만듭니다 |
-| 스킬 | `systematic-debugging` | 원인을 확인한 뒤에만 고치는 디버깅 절차입니다 |
-| 스킬 | `security-checklist` | 변경한 코드를 스택과 무관한 기준으로 보안 점검합니다 |
-| 스킬 | `test` | 변경한 동작에 맞는 테스트를 작성하고 실행해 확인합니다 |
+| 스킬 | `spec-interview` | 구현 전에 인터뷰로 요구사항을 정리해 스펙 문서를 만듭니다 |
+| 스킬 | `root-cause-debugging` | 원인을 확인한 뒤에만 고치는 디버깅 절차입니다 |
+| 스킬 | `security-check` | 변경한 코드를 스택과 무관한 기준으로 보안 점검합니다 |
+| 스킬 | `test-writer` | 변경한 동작에 맞는 테스트를 작성하고 실행해 확인합니다 |
 
 각 항목의 자세한 설명은 [훅](core/hooks/README.md), [에이전트](core/agents/README.md), [스킬](core/skills/README.md) 문서에 있습니다.
 

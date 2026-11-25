@@ -1,5 +1,5 @@
 ---
-name: planning
+name: spec-interview
 description: 구현을 시작하기 전에 요구사항, 제약, 트레이드오프를 인터뷰로 정리해서 구현 스펙 문서를 만든다. "계획 세워줘", "스펙 먼저 정리하자", "설계부터 같이 보자", "plan this before coding" 같은 요청에 쓴다.
 allowed-tools: AskUserQuestion, Read, Grep, Glob, Write
 ---

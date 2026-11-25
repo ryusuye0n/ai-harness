@@ -1,5 +1,5 @@
 ---
-name: systematic-debugging
+name: root-cause-debugging
 description: 버그, 테스트 실패, 예상과 다른 동작을 원인부터 확인하고 고친다. 원인을 확인하기 전에는 고치지 않는다. "버그 잡아줘", "왜 안 되는지 찾아줘", "테스트가 깨져", "이거 원인이 뭐야", "debug this" 같은 요청에 쓴다.
 allowed-tools: Read, Grep, Glob, Edit, Write, Bash
 ---

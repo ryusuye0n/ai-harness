@@ -1,5 +1,5 @@
 ---
-name: security-checklist
+name: security-check
 description: 변경한 코드의 보안 문제를 스택과 무관한 기준으로 점검한다. 인증, 사용자 입력, 외부 호출, 파일, 비밀값을 다루는 변경을 머지하기 전에 쓴다. "보안 점검해줘", "취약점 있는지 봐줘", "머지 전 보안 체크", "security review" 같은 요청에 쓴다.
 allowed-tools: Read, Grep, Glob, Bash
 ---
