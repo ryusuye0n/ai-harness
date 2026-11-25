@@ -12,9 +12,8 @@
 HOOK_INPUT="$(cat)"
 tool="$(json_get tool_name)"
 
-block() {
-  echo "[secret-block] 차단: $1" >&2
-  echo "$2" >&2
+deny() {
+  printf '[%s] 차단: %s\n%s\n' "secret-block" "$1" "$2" >&2
   exit 2
 }
 
@@ -49,7 +48,7 @@ esac
 if [ -n "$text" ]; then
   for i in "${!secret_patterns[@]}"; do
     if printf '%s' "$text" | grep -qE -e "${secret_patterns[$i]}"; then
-      block "${secret_labels[$i]}로 보이는 문자열" "비밀값은 코드나 명령에 직접 적지 말고 환경 변수나 비밀 저장소를 쓰세요."
+      deny "${secret_labels[$i]}로 보이는 문자열" "비밀값은 코드나 명령에 직접 적지 말고 환경 변수나 비밀 저장소를 쓰세요."
     fi
   done
 fi
@@ -81,7 +80,7 @@ if [ "$tool" = "Bash" ]; then
       case "$word" in
         -A | --all | "." | "*" | ":/") add_all=1 ;;
         -*) ;;
-        *) is_secret_file "$word" && block "비밀 파일 git add: $word" "비밀 파일은 커밋하지 않습니다. .gitignore 에 추가하세요." ;;
+        *) is_secret_file "$word" && deny "비밀 파일 git add: $word" "비밀 파일은 커밋하지 않습니다. .gitignore 에 추가하세요." ;;
       esac
     done
 
@@ -89,7 +88,7 @@ if [ "$tool" = "Bash" ]; then
     if [ "$add_all" -eq 1 ]; then
       while IFS= read -r file; do
         [ -n "$file" ] || continue
-        is_secret_file "$file" && block "비밀 파일이 한꺼번에 담김: $file" "이 파일을 .gitignore 에 추가한 뒤 다시 시도하세요."
+        is_secret_file "$file" && deny "비밀 파일이 한꺼번에 담김: $file" "이 파일을 .gitignore 에 추가한 뒤 다시 시도하세요."
       done < <(git ls-files --others --exclude-standard 2>/dev/null)
     fi
   done <<< "$segments"

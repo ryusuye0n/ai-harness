@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
-# irreversible-block: 되돌릴 수 없는 셸 명령을 막는다.
+# irreversible-block: 실행하면 원래대로 돌릴 수 없는 셸 명령을 실행 전에 막는다.
 #
-# 막을지 말지는 "위험해 보이는가"가 아니라 "되돌릴 수 있는가"로 정한다.
-# `rm -rf dist` 는 다시 빌드하면 되고 `git push --force-with-lease` 는 남의 커밋을 덮지 않는다.
-# 그런 것까지 막으면 훅을 꺼 버리게 되고, 그러면 정말 위험한 명령도 같이 열린다.
+# 기준은 하나다. 실행한 뒤에 되돌릴 방법이 남는가.
+#   막는다    홈·루트·작업 폴더 삭제, 커밋하지 않은 변경 폐기, 원격 기록 덮어쓰기와 삭제
+#   통과한다  node_modules 삭제(다시 설치하면 됨), git reset --soft(커밋이 남음),
+#            git push --force-with-lease(남의 커밋을 덮지 않음)
+# 위험해 보인다는 이유만으로 넓게 막지는 않는다.
 #
 # 입력: PreToolUse JSON (stdin)   출력: 막을 때 exit 2 + stderr 안내
 
@@ -14,9 +16,8 @@ HOOK_INPUT="$(cat)"
 command="$(json_get tool_input.command)"
 [ -n "$command" ] || exit 0
 
-block() {
-  echo "[irreversible-block] 차단: $1" >&2
-  echo "$2" >&2
+deny() {
+  printf '[%s] 차단: %s\n%s\n' "irreversible-block" "$1" "$2" >&2
   exit 2
 }
 
@@ -27,7 +28,7 @@ segments="$(printf '%s' "$command" | sed 's/&&/\n/g; s/||/\n/g; s/[;|&]/\n/g')"
 
 re='(^|[[:space:];&|])sudo[[:space:]]+rm([[:space:]]|$)'
 if [[ "$command" =~ $re ]]; then
-  block "sudo rm" "관리자 권한 삭제는 훅이 되돌릴 수 없습니다. 직접 실행하세요."
+  deny "sudo rm" "관리자 권한 삭제는 훅이 되돌릴 수 없습니다. 직접 실행하세요."
 fi
 
 # rm 이 -r 과 -f 로 루트, 홈, 상위·현재 디렉터리 전체 같은 곳을 지우는지 본다.
@@ -61,23 +62,23 @@ rm_wipes_everything() {
 
 while IFS= read -r segment; do
   if rm_wipes_everything "$segment"; then
-    block "rm -rf (루트·홈·작업 디렉터리 전체)" "복구할 수 없는 삭제입니다. 지울 대상을 정확히 지정하세요."
+    deny "rm -rf (루트·홈·작업 디렉터리 전체)" "복구할 수 없는 삭제입니다. 지울 대상을 정확히 지정하세요."
   fi
 done <<< "$segments"
 
 re='(^|[[:space:]])dd[[:space:]]+[^|;&]*of=/dev/'
 if [[ "$command" =~ $re ]]; then
-  block "dd of=/dev/..." "디바이스를 덮어씁니다. 직접 실행하세요."
+  deny "dd of=/dev/..." "디바이스를 덮어씁니다. 직접 실행하세요."
 fi
 
 re='(^|[[:space:];&|])mkfs(\.[a-z0-9]+)?([[:space:]]|$)'
 if [[ "$command" =~ $re ]]; then
-  block "mkfs" "파일시스템을 새로 만드는 명령입니다. 직접 실행하세요."
+  deny "mkfs" "파일시스템을 새로 만드는 명령입니다. 직접 실행하세요."
 fi
 
 re='>[[:space:]]*/dev/(sd[a-z]|hd[a-z]|vd[a-z]|nvme|mem|kmem)'
 if [[ "$command" =~ $re ]]; then
-  block "디바이스에 직접 쓰기" "디바이스에 바로 쓰는 명령입니다. 직접 실행하세요."
+  deny "디바이스에 직접 쓰기" "디바이스에 바로 쓰는 명령입니다. 직접 실행하세요."
 fi
 
 # ── 2. git: 남의 커밋을 덮거나 작업 내용을 버리는 명령 ──────────────
@@ -138,10 +139,10 @@ git_discards_work() {
 
 while IFS= read -r segment; do
   if git_force_push "$segment"; then
-    block "git push --force" "남의 커밋을 덮을 수 있습니다. --force-with-lease 를 쓰거나 직접 실행하세요."
+    deny "git push --force" "남의 커밋을 덮을 수 있습니다. --force-with-lease 를 쓰거나 직접 실행하세요."
   fi
   if git_discards_work "$segment"; then
-    block "git reset --hard / git clean -f" "커밋하지 않은 변경이 사라집니다. 상태를 확인한 뒤 직접 실행하세요."
+    deny "git reset --hard / git clean -f" "커밋하지 않은 변경이 사라집니다. 상태를 확인한 뒤 직접 실행하세요."
   fi
 done <<< "$segments"
 
@@ -174,17 +175,17 @@ re_gh_api_delete='(^|[[:space:]])gh[[:space:]]+api[[:space:]].*(-X|--method)[[:s
 
 while IFS= read -r segment; do
   if git_deletes_remote_ref "$segment"; then
-    block "원격 브랜치·태그 삭제" "원격에서 삭제하면 되돌리기 어렵습니다. 직접 실행하세요."
+    deny "원격 브랜치·태그 삭제" "원격에서 삭제하면 되돌리기 어렵습니다. 직접 실행하세요."
   fi
   if [[ "$segment" =~ $re_gh_delete ]] || [[ "$segment" =~ $re_gh_api_delete ]]; then
-    block "gh 원격 리소스 삭제" "GitHub 리소스 삭제는 되돌릴 수 없습니다. 직접 실행하세요."
+    deny "gh 원격 리소스 삭제" "GitHub 리소스 삭제는 되돌릴 수 없습니다. 직접 실행하세요."
   fi
 done <<< "$segments"
 
 # curl 이나 wget 으로 받은 내용을 검토 없이 셸에 넘기는 명령
 re='(curl|wget)[^|]*\|[[:space:]]*(sudo[[:space:]]+)?(ba|z|da)?sh([[:space:]]|$)'
 if [[ "$command" =~ $re ]]; then
-  block "받은 스크립트를 바로 셸에 전달" "스크립트를 먼저 내려받아 내용을 확인한 뒤 실행하세요."
+  deny "받은 스크립트를 바로 셸에 전달" "스크립트를 먼저 내려받아 내용을 확인한 뒤 실행하세요."
 fi
 
 exit 0
