@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
-# ai-harness 설치 스크립트: 하네스 파일을 다른 레포의 .claude/ 로 복사한다.
+# ai-harness 설치 스크립트: 하네스 파일을 다른 레포로 복사한다.
+# Claude 는 .claude/ 로 그대로 복사하고, 다른 도구는 adapters/<도구>/ 의 규칙에 따라 변환해서 넣는다.
 #
 #   ./install.sh <대상 레포 경로> [--only hooks,agents,skills,templates]
-#                [--stack 이름[,이름...]] [--tool claude] [--force] [--dry-run]
+#                [--stack 이름[,이름...]] [--tool claude|codex] [--force] [--dry-run]
 #
 # 이미 있는 파일은 덮어쓰지 않고 건너뛴다. --force 를 주면 하네스가 만든 파일만 덮어쓴다.
-# 대상 레포의 CLAUDE.md 와 .claude/settings.json 은 사용자 파일이라 --force 로도 덮어쓰지 않는다.
+# 대상 레포의 지침 파일(CLAUDE.md, AGENTS.md)과 설정 파일(.claude/settings.json, .codex/hooks.json)은
+# 사용자 파일이라 --force 로도 덮어쓰지 않는다.
 set -u
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -18,7 +20,7 @@ usage() {
   --only <목록>    설치할 구성만 고른다. 쉼표로 구분: hooks, agents, skills, templates
                    (기본: 전부)
   --stack <목록>   stacks/ 의 스택 팩도 함께 설치한다. 쉼표로 구분
-  --tool <이름>    대상 도구 (현재 claude 만 지원)
+  --tool <이름>    대상 도구. claude(기본) 또는 adapters/ 아래에 어댑터가 있는 도구
   --force          이미 있는 하네스 파일을 덮어쓴다
   --dry-run        파일을 복사하지 않고 무엇을 할지만 보여 준다
   -h, --help       이 도움말
@@ -53,7 +55,17 @@ done
 [ -n "$target" ] || { usage; exit 1; }
 [ -d "$target" ] || die "대상 폴더가 없습니다: $target"
 target="$(cd "$target" && pwd)"
-[ "$tool" = "claude" ] || die "아직 지원하지 않는 도구입니다: $tool (현재 claude 만 지원)"
+
+case "$tool" in
+  "" | *[!a-z]*) die "도구 이름이 올바르지 않습니다: '$tool'" ;;
+esac
+if [ "$tool" != "claude" ] && [ ! -f "$ROOT/adapters/$tool/adapter.sh" ]; then
+  supported="claude"
+  for adapter in "$ROOT"/adapters/*/adapter.sh; do
+    [ -f "$adapter" ] && supported="$supported, $(basename "$(dirname "$adapter")")"
+  done
+  die "아직 지원하지 않는 도구입니다: $tool (지원: $supported)"
+fi
 
 has_part() {
   case ",$only," in *",$1,"*) return 0 ;; esac
@@ -87,6 +99,13 @@ copied=0
 overwritten=0
 unchanged=0
 skipped=0
+
+# 도구마다 다른 값. 어댑터가 자기 도구에 맞게 바꾼다. 마무리 안내에 쓰인다.
+config_file=".claude/settings.json"
+config_source="templates/settings.json"
+instruction_file="CLAUDE.md"
+tool_note=""
+settings_kept=0
 
 # ── 복사 ──────────────────────────────────────────────────────
 
@@ -130,24 +149,7 @@ copy_tree() {
   done < <(find "$src_dir" -type f ! -name README.md ! -name .gitkeep ! -name settings.hooks.json -print0 | sort -z)
 }
 
-# ── core ──────────────────────────────────────────────────────
-
-has_part hooks && copy_tree "$ROOT/core/hooks" "$target/.claude/hooks"
-has_part agents && copy_tree "$ROOT/core/agents" "$target/.claude/agents"
-has_part skills && copy_tree "$ROOT/core/skills" "$target/.claude/skills"
-
-# ── 스택 팩 ───────────────────────────────────────────────────
-# 이름 검사는 위에서 이미 끝냈다. 복사 도중에 오류로 멈추지 않게 하려는 것이다.
-
-for name in ${stack_list[@]+"${stack_list[@]}"}; do
-  copy_tree "$ROOT/stacks/$name/skills" "$target/.claude/skills"
-  copy_tree "$ROOT/stacks/$name/hooks/modules" "$target/.claude/hooks/modules"
-done
-
-# ── 템플릿 ────────────────────────────────────────────────────
-
-# CLAUDE.md 와 settings.json 은 사용자가 채우고 고치는 파일이라 이미 있으면 건드리지 않는다.
-settings_kept=0
+# 지침 파일과 설정 파일은 사용자가 채우고 고치는 파일이라 이미 있으면 건드리지 않는다.
 install_user_file() {
   local src="$1" dest="$2" shown="$3"
   if [ -e "$dest" ]; then
@@ -158,9 +160,26 @@ install_user_file() {
   copy_file "$src" "$dest" "$shown"
 }
 
-if has_part templates; then
-  install_user_file "$ROOT/templates/CLAUDE.md" "$target/CLAUDE.md" "CLAUDE.md"
-  install_user_file "$ROOT/templates/settings.json" "$target/.claude/settings.json" ".claude/settings.json" || settings_kept=1
+# ── 설치 ──────────────────────────────────────────────────────
+
+if [ "$tool" = "claude" ]; then
+  has_part hooks && copy_tree "$ROOT/core/hooks" "$target/.claude/hooks"
+  has_part agents && copy_tree "$ROOT/core/agents" "$target/.claude/agents"
+  has_part skills && copy_tree "$ROOT/core/skills" "$target/.claude/skills"
+
+  # 스택 팩. 이름 검사는 위에서 이미 끝냈다. 복사 도중에 오류로 멈추지 않게 하려는 것이다.
+  for name in ${stack_list[@]+"${stack_list[@]}"}; do
+    copy_tree "$ROOT/stacks/$name/skills" "$target/.claude/skills"
+    copy_tree "$ROOT/stacks/$name/hooks/modules" "$target/.claude/hooks/modules"
+  done
+
+  if has_part templates; then
+    install_user_file "$ROOT/templates/CLAUDE.md" "$target/CLAUDE.md" "CLAUDE.md"
+    install_user_file "$ROOT/templates/settings.json" "$target/.claude/settings.json" ".claude/settings.json" || settings_kept=1
+  fi
+else
+  # shellcheck disable=SC1090
+  . "$ROOT/adapters/$tool/adapter.sh"
 fi
 
 # ── 마무리 ────────────────────────────────────────────────────
@@ -174,10 +193,11 @@ if has_part hooks || has_part templates; then
   echo "다음 할 일"
   if has_part hooks; then
     echo "  - 훅은 jq 또는 node 가 있어야 동작합니다."
-    if [ "${settings_kept:-0}" -eq 1 ] || ! has_part templates; then
-      echo "  - 기존 .claude/settings.json 에 templates/settings.json 의 hooks 항목을 직접 합치세요."
+    if [ "$settings_kept" -eq 1 ] || ! has_part templates; then
+      echo "  - 기존 $config_file 에 $config_source 의 hooks 항목을 직접 합치세요."
     fi
+    [ -n "$tool_note" ] && echo "  - $tool_note"
   fi
-  has_part templates && echo "  - CLAUDE.md 의 빈칸을 프로젝트에 맞게 채우세요."
+  has_part templates && echo "  - $instruction_file 의 빈칸을 프로젝트에 맞게 채우세요."
 fi
 exit 0
