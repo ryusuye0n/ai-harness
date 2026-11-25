@@ -20,5 +20,18 @@
       "Read(**/*.pem)",
       "Read(**/id_rsa*)"
     ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Read|Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/dispatcher/run.sh\" preToolUse"
+          }
+        ]
+      }
+    ]
   }
 }
