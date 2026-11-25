@@ -72,18 +72,16 @@ ai-harness/
 
 ## 사용 방법
 
-`install.sh`가 하네스 파일을 대상 레포로 복사합니다. bash가 필요하고, 윈도우에서는 Git Bash로 실행합니다.
+`install.sh`가 하네스 파일을 대상 레포로 복사합니다. Claude는 대상 레포의 `.claude/`에 훅, 에이전트, 스킬을 넣고, 레포 루트에 `CLAUDE.md` 양식을, `.claude/settings.json`에 설정 양식을 넣습니다.
 
 ```bash
-./install.sh <대상 레포 경로>
+./install.sh <대상 레포 경로> [옵션]
 ```
-
-대상 레포의 `.claude/`에 훅, 에이전트, 스킬을 넣고, 레포 루트에 `CLAUDE.md` 양식을, `.claude/settings.json`에 설정 양식을 넣습니다.
 
 ```bash
 ./install.sh ../my-repo --dry-run              무엇을 할지만 보기
 ./install.sh ../my-repo --only agents,hooks    일부만 설치
-./install.sh ../my-repo --stack go             stacks/go 팩도 함께 설치
+./install.sh ../my-repo --stack <이름>         stacks/<이름> 팩도 함께 설치
 ```
 
 | 옵션 | 설명 |
@@ -95,10 +93,9 @@ ai-harness/
 | `--dry-run` | 복사하지 않고 결과만 보여 줍니다 |
 
 - 이미 있는 파일은 덮어쓰지 않고 건너뜁니다. `--force`는 하네스가 만든 파일만 덮어씁니다.
-- 대상 레포의 `CLAUDE.md`와 `.claude/settings.json`은 사용자 파일이라 `--force`로도 덮어쓰지 않습니다. 설정 파일이 이미 있다면 [templates/settings.json](templates/settings.json)의 `hooks` 항목을 직접 합칩니다.
+- 대상 레포의 `CLAUDE.md`와 `.claude/settings.json`은 사용자 파일이라 `--force`로도 덮어쓰지 않습니다.
 - `--tool codex`는 `.codex/`, `.agents/`, `AGENTS.md`에 Codex 형식으로 변환해서 넣습니다. 자세한 내용은 [adapters/codex/README.md](adapters/codex/README.md)에 있습니다.
-
-설치한 뒤에는 `CLAUDE.md`의 빈칸을 프로젝트에 맞게 채웁니다. 커밋과 PR 규칙을 비워 두면 처음 만든 커밋의 형식을 규칙으로 삼아 기록합니다. 설정 항목 설명은 [templates/README.md](templates/README.md)에 있습니다. 훅은 `jq` 또는 `node`가 있어야 동작합니다.
+- 설정 항목 설명은 [templates/README.md](templates/README.md)에 있습니다.
 
 ## 스택 팩 추가
 
