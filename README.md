@@ -54,7 +54,7 @@ ai-harness/
 - 대상 레포의 `CLAUDE.md`와 `.claude/settings.json`은 사용자 파일이라 `--force`로도 덮어쓰지 않습니다. 설정 파일이 이미 있다면 [templates/settings.json](templates/settings.json)의 `hooks` 항목을 직접 합칩니다.
 - `--tool codex`는 `.codex/`, `.agents/`, `AGENTS.md`에 Codex 형식으로 변환해서 넣습니다. 자세한 내용은 [adapters/codex/README.md](adapters/codex/README.md)에 있습니다.
 
-설치한 뒤에는 `CLAUDE.md`의 빈칸을 프로젝트에 맞게 채웁니다. 설정 항목 설명은 [templates/README.md](templates/README.md)에 있습니다. 훅은 `jq` 또는 `node`가 있어야 동작합니다.
+설치한 뒤에는 `CLAUDE.md`의 빈칸을 프로젝트에 맞게 채웁니다. 커밋과 PR 규칙을 비워 두면 처음 만든 커밋의 형식을 규칙으로 삼아 기록합니다. 설정 항목 설명은 [templates/README.md](templates/README.md)에 있습니다. 훅은 `jq` 또는 `node`가 있어야 동작합니다.
 
 ## 스택 팩 추가
 
