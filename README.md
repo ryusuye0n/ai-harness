@@ -97,6 +97,20 @@ ai-harness/
 - `--tool codex`는 `.codex/`, `.agents/`, `AGENTS.md`에 Codex 형식으로 변환해서 넣습니다. 자세한 내용은 [adapters/codex/README.md](adapters/codex/README.md)에 있습니다.
 - 설정 항목 설명은 [templates/README.md](templates/README.md)에 있습니다.
 
+## 컨벤션 적는 법
+
+하네스에는 커밋, 브랜치, PR 규칙이 없습니다. 쓰는 사람이 아래 위치에 적습니다.
+
+| 무엇을 | 어디에 |
+|---|---|
+| 프로젝트 규칙 (커밋, 브랜치, PR 제목, 코드 스타일) | 그 레포의 `CLAUDE.md` (Codex는 `AGENTS.md`) |
+| PR 본문 양식 | 그 레포의 `.github/PULL_REQUEST_TEMPLATE.md` |
+| 모든 프로젝트에 적용할 개인 취향 | `~/.claude/CLAUDE.md` |
+
+`CLAUDE.md` 양식에는 커밋, 브랜치, PR 규칙 칸이 비어 있습니다. 프로젝트를 시작할 때 채우는 것을 기본으로 합니다.
+
+비워 두면 에이전트가 형식을 임의로 정하지 않고, **사용자가 처음 만든 커밋(또는 PR 제목)의 형식을 규칙으로 삼습니다.** 형식을 정리해서 보여 주고 확인받은 뒤에 `CLAUDE.md`의 빈칸에 적으며, 이미 채워진 칸은 고치지 않습니다. 이 동작은 양식 맨 위의 지침이 시키는 것이라 항상 지켜진다고 보장할 수는 없습니다.
+
 ## 스택 팩 추가
 
 폴더 하나가 스택 하나입니다. `stacks/<이름>/` 아래에 스킬과 훅 모듈을 두면 되고, `core/`는 건드리지 않습니다. `stacks/_template/`을 복사해서 시작하면 되고, 자세한 방법은 [stacks/_template/README.md](stacks/_template/README.md)에 있습니다.
