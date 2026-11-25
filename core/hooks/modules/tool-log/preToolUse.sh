@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# logging: 도구 호출을 한 줄씩 기록한다. 어떤 일이 있었는지 나중에 돌아볼 때 쓴다.
+# tool-log: 도구 호출을 한 줄씩 기록한다. 어떤 일이 있었는지 나중에 돌아볼 때 쓴다.
 #
 # 기본 위치는 ~/.claude/logs/harness-tools.log 이고 HARNESS_LOG_FILE 로 바꿀 수 있다.
 # 레포 밖에 두어서 실수로 커밋되지 않게 했다. 명령은 200자까지만 남기고 가리지는 않으니,

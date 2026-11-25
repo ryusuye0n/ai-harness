@@ -8,9 +8,9 @@ AI 코딩 도구(Claude Code, Codex)에서 쓰는 훅, 에이전트, 스킬을 �
 
 | 구분 | 이름 | 하는 일 |
 |---|---|---|
-| 훅 | `command-guard` | 루트·홈·작업 폴더를 통째로 지우는 `rm -rf`, `git push --force`, `git reset --hard`, 원격 삭제, `curl \| sh` 같은 되돌릴 수 없는 명령을 막습니다 |
-| 훅 | `secret-guard` | 토큰과 키가 코드나 명령에 들어가는 것, `.env`와 개인 키를 `git add` 하는 것을 막습니다 |
-| 훅 | `logging` | 도구 호출을 한 줄씩 기록합니다 |
+| 훅 | `irreversible-block` | 루트·홈·작업 폴더를 통째로 지우는 `rm -rf`, `git push --force`, `git reset --hard`, 원격 삭제, `curl \| sh` 같은 되돌릴 수 없는 명령을 막습니다 |
+| 훅 | `secret-block` | 토큰과 키가 코드나 명령에 들어가는 것, `.env`와 개인 키를 `git add` 하는 것을 막습니다 |
+| 훅 | `tool-log` | 도구 호출을 한 줄씩 기록합니다 |
 | 에이전트 | `contradiction-finder` | 지침 문서끼리, 문서와 코드가 어긋나는 곳을 찾아 보고합니다 (파일 수정 안 함) |
 | 에이전트 | `doc-polisher` | 문서를 현재 코드에 맞게 갱신합니다 |
 | 에이전트 | `prompt-polisher` | 에이전트와 스킬 파일을 점검하고 개선안을 제안합니다 (파일 수정 안 함) |
@@ -38,7 +38,7 @@ cd ai-harness
 
 1. `my-repo/CLAUDE.md`의 빈칸을 채웁니다. 커밋과 PR 규칙은 비워 둬도 됩니다. ([컨벤션 적는 법](#컨벤션-적는-법))
 2. 레포에 `.claude/settings.json`이 이미 있었다면 [templates/settings.json](templates/settings.json)의 `hooks` 항목을 직접 합칩니다. 없었다면 설치할 때 함께 들어갑니다.
-3. 그 레포에서 Claude Code를 엽니다. 훅이 막으면 `[command-guard] 차단: ...`처럼 이유가 전달됩니다.
+3. 그 레포에서 Claude Code를 엽니다. 훅이 막으면 `[irreversible-block] 차단: ...`처럼 이유가 전달됩니다.
 
 Codex를 쓴다면 `--tool codex`를 붙입니다.
 
@@ -131,7 +131,7 @@ ai-harness/
 | 훅이 아무것도 막지 않는다 | `.claude/settings.json`에 `hooks` 항목이 있는지, `jq` 또는 `node`가 설치되어 있는지 확인합니다. 둘 다 없으면 `[harness] jq 또는 node 가 없어 훅을 건너뜁니다` 경고가 나옵니다 |
 | Codex에서 훅이 실행되지 않는다 | Codex는 새로 추가하거나 바뀐 훅을 `/hooks`에서 검토하고 신뢰해야 실행합니다 |
 | 윈도우에서 훅이 오류를 낸다 | Git Bash가 필요합니다. 스크립트에 `\r`(CRLF)이 섞였다면 LF로 저장하세요 |
-| 막으면 안 되는 명령이 막힌다 | `command-guard`는 명령 문자열을 보고 판단합니다. 그 모듈만 빼려면 `.claude/hooks/modules/command-guard/` 폴더를 지웁니다 |
+| 막으면 안 되는 명령이 막힌다 | `irreversible-block`은 명령 문자열을 보고 판단합니다. 그 모듈만 빼려면 `.claude/hooks/modules/irreversible-block/` 폴더를 지웁니다 |
 | `permissions` 규칙이 먹지 않는다 | 규칙 문법은 Claude Code 버전에 따라 다를 수 있습니다. 쓰는 버전의 문서에 맞게 `settings.json`을 고칩니다 |
 | 설치가 "건너뜀"만 출력한다 | 이미 있는 파일은 덮어쓰지 않는 것이 기본입니다. 바꾸려면 `--force`를 씁니다 |
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# secret-guard: 비밀값이 파일에 쓰이거나 커밋에 들어가는 것을 막는다.
+# secret-block: 비밀값이 파일에 쓰이거나 커밋에 들어가는 것을 막는다.
 #
 #   1. Write, Edit, Bash 입력에 토큰이나 키 같은 패턴이 있으면 막는다.
 #      Codex 의 파일 수정 도구(apply_patch)는 패치 내용이 command 에 담겨 오므로 같이 검사한다.
@@ -13,7 +13,7 @@ HOOK_INPUT="$(cat)"
 tool="$(json_get tool_name)"
 
 block() {
-  echo "[secret-guard] 차단: $1" >&2
+  echo "[secret-block] 차단: $1" >&2
   echo "$2" >&2
   exit 2
 }

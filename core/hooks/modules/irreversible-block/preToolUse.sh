@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# command-guard: 되돌릴 수 없는 셸 명령을 막는다.
+# irreversible-block: 되돌릴 수 없는 셸 명령을 막는다.
 #
 # 막을지 말지는 "위험해 보이는가"가 아니라 "되돌릴 수 있는가"로 정한다.
 # `rm -rf dist` 는 다시 빌드하면 되고 `git push --force-with-lease` 는 남의 커밋을 덮지 않는다.
@@ -15,7 +15,7 @@ command="$(json_get tool_input.command)"
 [ -n "$command" ] || exit 0
 
 block() {
-  echo "[command-guard] 차단: $1" >&2
+  echo "[irreversible-block] 차단: $1" >&2
   echo "$2" >&2
   exit 2
 }

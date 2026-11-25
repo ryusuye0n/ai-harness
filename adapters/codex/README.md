@@ -32,8 +32,8 @@
 
 - **에이전트의 도구 제한이 사라집니다.** Codex 에이전트 파일에는 `tools`에 해당하는 항목이 없습니다. 검사만 하는 에이전트(`contradiction-finder`, `prompt-polisher`, `web-researcher`)의 "수정하지 않는다"는 본문 지시로만 남습니다.
 - **훅은 `PreToolUse`만 연결합니다.** 대상은 `Bash|apply_patch`입니다.
-  - `command-guard`는 `Bash`만 봅니다.
-  - `secret-guard`는 `apply_patch`의 패치 내용(`tool_input.command`)에서 비밀값 패턴을 찾습니다. Codex의 파일 수정 입력에는 파일 경로 필드가 없다고 문서에 적혀 있습니다.
+  - `irreversible-block`은 `Bash`만 봅니다.
+  - `secret-block`은 `apply_patch`의 패치 내용(`tool_input.command`)에서 비밀값 패턴을 찾습니다. Codex의 파일 수정 입력에는 파일 경로 필드가 없다고 문서에 적혀 있습니다.
 - **막는 방법이 다릅니다.** 래퍼가 모듈의 거부(`exit 2`)를 `permissionDecision: "deny"` JSON으로 바꿔 알리고 `exit 0`으로 끝냅니다. `PostToolUse`는 `decision: "block"` JSON을 씁니다.
 - **스택 팩의 `settings.hooks.json`은 Claude 형식**이라 자동으로 연결되지 않습니다. `PostToolUse` 모듈을 쓰려면 `.codex/hooks.json`에 직접 추가합니다.
 - **새로 설치하거나 바뀐 훅은 Codex의 `/hooks`에서 검토하고 신뢰해야 실행됩니다.**
