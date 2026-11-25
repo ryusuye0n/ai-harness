@@ -22,7 +22,8 @@ ai-harness/
 │   ├─ codex/
 │   └─ gemini/
 └─ templates/       레포에 복사해서 채워 쓰는 양식
-    └─ CLAUDE.md
+    ├─ CLAUDE.md
+    └─ settings.json
 ```
 
 ## 사용 방법
@@ -32,6 +33,7 @@ ai-harness/
 1. `core/`의 필요한 스킬, 에이전트, 훅을 복사합니다.
 2. 쓰는 스택이 `stacks/`에 있으면 그 폴더를 같이 복사합니다.
 3. `templates/CLAUDE.md`를 레포 루트에 복사해서 프로젝트 규칙을 채웁니다.
+4. `templates/settings.json`을 `.claude/settings.json`으로 복사합니다. 항목 설명은 [templates/README.md](templates/README.md)에 있습니다.
 
 ## 스택 팩 추가
 
