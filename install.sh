@@ -143,6 +143,25 @@ for name in ${stack_list[@]+"${stack_list[@]}"}; do
   copy_tree "$ROOT/stacks/$name/hooks/modules" "$target/.claude/hooks/modules"
 done
 
+# ── 템플릿 ────────────────────────────────────────────────────
+
+# CLAUDE.md 와 settings.json 은 사용자가 채우고 고치는 파일이라 이미 있으면 건드리지 않는다.
+settings_kept=0
+install_user_file() {
+  local src="$1" dest="$2" shown="$3"
+  if [ -e "$dest" ]; then
+    say "건너뜀 (사용자 파일이라 덮어쓰지 않음): $shown"
+    skipped=$((skipped + 1))
+    return 1
+  fi
+  copy_file "$src" "$dest" "$shown"
+}
+
+if has_part templates; then
+  install_user_file "$ROOT/templates/CLAUDE.md" "$target/CLAUDE.md" "CLAUDE.md"
+  install_user_file "$ROOT/templates/settings.json" "$target/.claude/settings.json" ".claude/settings.json" || settings_kept=1
+fi
+
 # ── 마무리 ────────────────────────────────────────────────────
 
 echo
