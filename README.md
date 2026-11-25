@@ -19,8 +19,7 @@ ai-harness/
 ├─ stacks/          스택별 묶음 (폴더 하나가 스택 하나)
 ├─ adapters/        도구별 변환 규칙
 │   ├─ claude/
-│   ├─ codex/
-│   └─ gemini/
+│   └─ codex/
 ├─ install.sh       하네스를 다른 레포로 복사하는 스크립트
 └─ templates/       레포에 복사해서 채워 쓰는 양식
     ├─ CLAUDE.md
@@ -73,7 +72,6 @@ stacks/<이름>/
 |---|---|
 | Claude Code | 우선 지원 |
 | Codex | 지원. 변환 형식과 설치 동작만 검증했고 실제 Codex에서의 동작은 미검증 ([adapters/codex](adapters/codex/README.md)) |
-| Gemini CLI | 예정 |
 
 ## 라이선스
 
