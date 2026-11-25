@@ -2,6 +2,7 @@
 # secret-guard: 비밀값이 파일에 쓰이거나 커밋에 들어가는 것을 막는다.
 #
 #   1. Write, Edit, Bash 입력에 토큰이나 키 같은 패턴이 있으면 막는다.
+#      Codex 의 파일 수정 도구(apply_patch)는 패치 내용이 command 에 담겨 오므로 같이 검사한다.
 #   2. .env 나 개인 키 같은 파일을 git add 하려 하면 막는다.
 #
 # 막을 때 비밀값 자체는 출력하지 않고 종류만 알려 준다.
@@ -41,7 +42,7 @@ secret_patterns=(
 case "$tool" in
   Write) text="$(json_get tool_input.content)" ;;
   Edit) text="$(json_get tool_input.new_string)" ;;
-  Bash) text="$(json_get tool_input.command)" ;;
+  Bash | apply_patch) text="$(json_get tool_input.command)" ;;
   *) exit 0 ;;
 esac
 
