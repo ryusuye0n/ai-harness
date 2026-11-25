@@ -13,7 +13,7 @@ tool="$(json_get tool_name)"
 [ -n "$tool" ] || exit 0
 
 case "$tool" in
-  Bash) detail="$(json_get tool_input.command)" ;;
+  Bash | apply_patch) detail="$(json_get tool_input.command)" ;;
   Read | Write | Edit) detail="$(json_get tool_input.file_path)" ;;
   *) detail="" ;;
 esac
